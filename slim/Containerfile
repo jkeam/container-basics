@@ -1,0 +1,18 @@
+# Use ubi micro
+FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:2636170dc55a0931d013014a72ae26c0c2521d4b61a28354b3e2e5369fa335a3
+
+# Install httpd (with no weak dependencies and no docs) and remove cached package data
+RUN microdnf install -y httpd --nodocs --setopt install_weak_deps=0 && \
+    microdnf clean all -y
+
+# Copy the config
+COPY config/* /etc/httpd/conf
+
+# Copy the website
+COPY website/* /var/www/html/
+
+# Expose Port
+EXPOSE 8080
+
+# Start httpd
+CMD ["httpd", "-DFOREGROUND"]
